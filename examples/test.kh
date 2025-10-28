@@ -1,0 +1,8 @@
+fetch basics
+
+recipe brew() {
+    count x = 10;
+    serve "Hello, Khamseena!";
+    serve "Value: " + x;
+    deliver 0;
+}
