@@ -5,11 +5,9 @@ Converts source code into a stream of tokens
 
 from khamseena_token import Token, TokenType, KEYWORDS
 
-
 class LexicalError(Exception):
     """Exception raised for lexical analysis errors"""
     pass
-
 
 class Scanner:
     """Lexical analyzer that tokenizes Khamseena source code"""
@@ -146,7 +144,7 @@ class Scanner:
                     '\\': '\\',
                     '"': '"'
                 }
-                
+                # "ramez   asham "
                 if self.current_char in escape_chars:
                     string_value += escape_chars[self.current_char]
                 else:

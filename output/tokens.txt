@@ -5,27 +5,27 @@ Total Tokens: 25
 ======================================================================
 TOKEN TYPE           VALUE                POSITION       
 ----------------------------------------------------------------------
-FETCH                fetch                1:1
+INCLUDE              fetch                1:1
 IDENTIFIER           basics               1:7
-RECIPE               recipe               3:1
-BREW                 brew                 3:8
+FUNCTION             recipe               3:1
+IDENTIFIER           main                 3:8
 LPAREN               (                    3:12
 RPAREN               )                    3:13
 LBRACE               {                    3:15
-COUNT                count                4:5
+INT                  count                4:5
 IDENTIFIER           x                    4:11
 ASSIGN               =                    4:13
 INTEGER              10                   4:15
 SEMICOLON            ;                    4:17
-SERVE                serve                5:5
+PRINT                serve                5:5
 STRING               "Hello, Khamseena!"  5:11
 SEMICOLON            ;                    5:30
-SERVE                serve                6:5
+PRINT                serve                6:5
 STRING               "Value: "            6:11
 PLUS                 +                    6:21
 IDENTIFIER           x                    6:23
 SEMICOLON            ;                    6:24
-DELIVER              deliver              7:5
+RETURN               deliver              7:5
 INTEGER              0                    7:13
 SEMICOLON            ;                    7:14
 RBRACE               }                    8:1

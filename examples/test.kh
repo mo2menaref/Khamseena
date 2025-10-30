@@ -1,8 +1,7 @@
-fetch basics
+fetch basics;
 
-recipe brew() {
-    count x = 10;
+recipe main() {
     serve "Hello, Khamseena!";
-    serve "Value: " + x;
+    serve "Value: " + x + y;
     deliver 0;
 }
