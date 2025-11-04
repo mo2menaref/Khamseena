@@ -11,7 +11,7 @@ class TokenType:
     RECIPE = "FUNCTION"
     COUNT = "INT"
     MEASURE = "FLOAT"
-    NOTE = "COMMENT"  
+    NOTE = "STRING"  
     FLAVOR = "BOOLEAN"  
     SWEET = "TRUE"  
     SOUR = "FALSE"  

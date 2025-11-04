@@ -1,16 +1,12 @@
-"""
-Simple Main for Khamseena Compiler
-Academic project - basic scanner and parser
-"""
 
 import sys
 import os
 from scanner import Scanner
 from khamseena_parser import Parser, ParseError, print_ast
 
-
 def main():
     """Simple main function"""
+    
     
     if len(sys.argv) < 2:
         print("Usage:")
@@ -55,7 +51,6 @@ def main():
         print(f"Error: File '{filename}' not found")
     except Exception as e:
         print(f"Error: {e}")
-
 
 if __name__ == "__main__":
     main()
