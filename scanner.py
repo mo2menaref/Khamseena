@@ -70,11 +70,20 @@ class Scanner:
             self.advance()
     
     def skip_comment(self):
-        """Skip single-line comments starting with #"""
+        """Capture single-line comments starting with #"""
         if self.current_char == '#':
-            # Skip until end of line
+            start_line = self.line
+            start_column = self.column
+            comment_text = ""
+            
+            # Read the entire comment including the #
             while self.current_char is not None and self.current_char != '\n':
+                comment_text += self.current_char
                 self.advance()
+            
+            # Create and add comment token
+            self.tokens.append(Token(TokenType.COMMENT, comment_text, start_line, start_column))
+            
             # Skip the newline character
             if self.current_char == '\n':
                 self.advance()

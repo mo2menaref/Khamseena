@@ -146,5 +146,18 @@ class Literal:
         # Change this to customize literal display
         return f"{self.type} {self.value}"
         # Alternative: return f"Literal({self.type}: {self.value})"
+
+class CommentStatement(ASTNode):
+    def __init__(self, text):
+        self.text = text
     
+    def __str__(self):
+        return f"Comment: {self.text}"
+
+class InputStatement(ASTNode):
+    def __init__(self, expression):
+        self.expression = expression
     
+    def __str__(self):
+        return "Input"
+

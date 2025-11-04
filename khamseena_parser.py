@@ -90,12 +90,16 @@ class Parser:
                 return self.parse_var_declaration()
             elif self.match(TokenType.SERVE):
                 return self.parse_print()
+            elif self.match(TokenType.POUR):
+                return self.parse_input()
             elif self.match(TokenType.TASTE):
                 return self.parse_if()
             elif self.match(TokenType.STIR):
                 return self.parse_while()
             elif self.match(TokenType.DELIVER):
                 return self.parse_return()
+            elif self.match(TokenType.COMMENT):
+                return self.parse_comment()
             elif self.match(TokenType.LBRACE):
                 return self.parse_block()
             elif self.match(TokenType.IDENTIFIER):
@@ -114,6 +118,8 @@ class Parser:
             print(f"⚠️ Warning: {e}")
             self.synchronize()
             return None
+        
+    
 
     # ---------- Statement types ----------
 
@@ -129,6 +135,7 @@ class Parser:
                 parameters.append(self.parse_parameter())
 
         self.consume(TokenType.RPAREN, "Expected ')' after parameters")
+        self.consume(TokenType.LBRACE, "Expected '{' before function body")
         body = self.parse_block()
         return FunctionDef(name, parameters, body)
 
@@ -171,10 +178,13 @@ class Parser:
         self.consume(TokenType.LPAREN, "Expected '(' after 'taste'")
         condition = self.parse_expression()
         self.consume(TokenType.RPAREN, "Expected ')' after condition")
+        
+        # Handle block or single statement for then clause
         then_stmt = self.parse_statement()
 
         else_stmt = None
         if self.match(TokenType.RETASTE):
+            # Handle block or single statement for else clause
             else_stmt = self.parse_statement()
 
         return IfStatement(condition, then_stmt, else_stmt)
@@ -196,15 +206,25 @@ class Parser:
         return ReturnStatement(value)
 
     def parse_block(self):
-        """Parse block: { statements }"""
+        """Parse block: { statements } - assumes { already consumed"""
         statements = []
-        self.consume(TokenType.LBRACE, "Expected '{'")
         while not self.check(TokenType.RBRACE) and not self.at_end():
             stmt = self.parse_statement()
             if stmt:
                 statements.append(stmt)
         self.consume(TokenType.RBRACE, "Expected '}'")
         return Block(statements)
+
+    def parse_comment(self):
+        """Parse comment statement"""
+        comment_text = self.previous().value
+        return CommentStatement(comment_text)
+
+    def parse_input(self):
+        """Parse input statement: pour expr;"""
+        expr = self.parse_expression()
+        self.consume(TokenType.SEMICOLON, "Expected ';' after input")
+        return InputStatement(expr)
 
     # ---------- Expressions ----------
 
