@@ -1,0 +1,8 @@
+fetch basics;
+
+recipe main() {
+    count x = 42
+    measure y = 3.14;
+    serve x + y
+    deliver x
+}

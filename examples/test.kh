@@ -8,16 +8,16 @@ recipe main() {
     serve x + y;
     pour x;
     #Hello
-    taste (x > 0) {
+    taste x > 0) {
         serve "Positive";
-    }                            
+    }
     retaste {
         serve "Not positive";
-    }                            
-    
-    stir (x < 10) {
-        x = x + 1;               
     }
     
-    deliver x;                   
-}   
+    stir (x < 10) {
+        x = x + 1;
+    }
+    
+    deliver x;
+}

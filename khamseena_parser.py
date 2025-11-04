@@ -70,6 +70,23 @@ class Parser:
         else:
             raise ParseError(f"Parse error: {message}")
 
+    def check_semicolon_after_statement(self, stmt_type):
+        """Check if semicolon is required after statement type"""
+        if not self.check(TokenType.SEMICOLON):
+            self.error(f"Expected ';' after {stmt_type}")
+
+    def validate_parentheses(self, expected_type, context):
+        """Validate that required parentheses are present"""
+        if not self.check(expected_type):
+            paren_name = "(" if expected_type == TokenType.LPAREN else ")"
+            self.error(f"Expected '{paren_name}' in {context}")
+
+    def validate_braces(self, expected_type, context):
+        """Validate that required braces are present"""
+        if not self.check(expected_type):
+            brace_name = "{" if expected_type == TokenType.LBRACE else "}"
+            self.error(f"Expected '{brace_name}' in {context}")
+
     # ---------- Parsing starts here ----------
 
     def parse(self):
@@ -84,7 +101,9 @@ class Parser:
     def parse_statement(self):
         """Parse a statement"""
         try:
-            if self.match(TokenType.RECIPE):
+            if self.match(TokenType.FETCH):
+                return self.parse_fetch()
+            elif self.match(TokenType.RECIPE):
                 return self.parse_function()
             elif self.match(TokenType.COUNT, TokenType.MEASURE, TokenType.NOTE, TokenType.FLAVOR):
                 return self.parse_var_declaration()
@@ -118,14 +137,14 @@ class Parser:
             print(f"⚠️ Warning: {e}")
             self.synchronize()
             return None
-        
-    
 
     # ---------- Statement types ----------
 
     def parse_function(self):
         """Parse function definition: recipe name(params) { body }"""
         name = self.consume(TokenType.IDENTIFIER, "Expected function name").value
+        
+        self.validate_parentheses(TokenType.LPAREN, "function parameters")
         self.consume(TokenType.LPAREN, "Expected '(' after function name")
 
         parameters = []
@@ -135,6 +154,8 @@ class Parser:
                 parameters.append(self.parse_parameter())
 
         self.consume(TokenType.RPAREN, "Expected ')' after parameters")
+        
+        self.validate_braces(TokenType.LBRACE, "function body")
         self.consume(TokenType.LBRACE, "Expected '{' before function body")
         body = self.parse_block()
         return FunctionDef(name, parameters, body)
@@ -150,58 +171,91 @@ class Parser:
     def parse_var_declaration(self):
         """Parse variable declaration: type name [= expr];"""
         var_type = self.previous().value
-        name = self.consume(TokenType.IDENTIFIER, "Expected variable name").value
+        name_token = self.consume(TokenType.IDENTIFIER, "Expected variable name")
+        name = name_token.value
+        var_line = name_token.line  # Capture line number here
 
         initializer = None
         if self.match(TokenType.ASSIGN):
             initializer = self.parse_expression()
 
+        # Check for semicolon and report error with correct line number
+        if not self.check(TokenType.SEMICOLON):
+            raise ParseError(f"Parse error at line {var_line}: Expected ';' after variable declaration")
+        
         self.consume(TokenType.SEMICOLON, "Expected ';' after variable declaration")
         return VarDeclaration(var_type, name, initializer)
 
     def parse_assignment(self):
         """Parse assignment: name = expr;"""
         name = self.previous().value
+        name_line = self.previous().line  # Capture line number
+        
         self.consume(TokenType.ASSIGN, "Expected '=' in assignment")
         value = self.parse_expression()
+        
+        # Check for semicolon with correct line number
+        if not self.check(TokenType.SEMICOLON):
+            raise ParseError(f"Parse error at line {name_line}: Expected ';' after assignment")
+        
         self.consume(TokenType.SEMICOLON, "Expected ';' after assignment")
         return Assignment(name, value)
 
     def parse_print(self):
         """Parse print statement: serve expr;"""
+        serve_line = self.previous().line  # Capture line number
         expr = self.parse_expression()
+        
+        # Check for semicolon with correct line number
+        if not self.check(TokenType.SEMICOLON):
+            raise ParseError(f"Parse error at line {serve_line}: Expected ';' after print statement")
+        
         self.consume(TokenType.SEMICOLON, "Expected ';' after print")
         return PrintStatement(expr)
 
     def parse_if(self):
         """Parse if statement: taste (expr) stmt [retaste stmt]"""
+        self.validate_parentheses(TokenType.LPAREN, "taste statement")
         self.consume(TokenType.LPAREN, "Expected '(' after 'taste'")
         condition = self.parse_expression()
-        self.consume(TokenType.RPAREN, "Expected ')' after condition")
+        self.consume(TokenType.RPAREN, "Expected ')' after taste condition")
         
-        # Handle block or single statement for then clause
+        # Validate that we have a block starting with {
+        self.validate_braces(TokenType.LBRACE, "taste statement body")
         then_stmt = self.parse_statement()
 
         else_stmt = None
         if self.match(TokenType.RETASTE):
-            # Handle block or single statement for else clause
+            # Validate that retaste also has proper block structure
+            self.validate_braces(TokenType.LBRACE, "retaste statement body")
             else_stmt = self.parse_statement()
 
         return IfStatement(condition, then_stmt, else_stmt)
 
     def parse_while(self):
         """Parse while statement: stir (expr) stmt"""
+        self.validate_parentheses(TokenType.LPAREN, "stir statement")
         self.consume(TokenType.LPAREN, "Expected '(' after 'stir'")
         condition = self.parse_expression()
-        self.consume(TokenType.RPAREN, "Expected ')' after condition")
+        self.consume(TokenType.RPAREN, "Expected ')' after stir condition")
+        
+        # Validate that we have a block starting with {
+        self.validate_braces(TokenType.LBRACE, "stir statement body")
         body = self.parse_statement()
         return WhileStatement(condition, body)
 
     def parse_return(self):
         """Parse return statement: deliver [expr];"""
+        return_line = self.previous().line  # Capture line number
+        
         value = None
         if not self.check(TokenType.SEMICOLON):
             value = self.parse_expression()
+        
+        # Check for semicolon with correct line number
+        if not self.check(TokenType.SEMICOLON):
+            raise ParseError(f"Parse error at line {return_line}: Expected ';' after return statement")
+        
         self.consume(TokenType.SEMICOLON, "Expected ';' after return")
         return ReturnStatement(value)
 
@@ -222,9 +276,27 @@ class Parser:
 
     def parse_input(self):
         """Parse input statement: pour expr;"""
+        pour_line = self.previous().line  # Capture line number
         expr = self.parse_expression()
+        
+        # Check for semicolon with correct line number
+        if not self.check(TokenType.SEMICOLON):
+            raise ParseError(f"Parse error at line {pour_line}: Expected ';' after input statement")
+        
         self.consume(TokenType.SEMICOLON, "Expected ';' after input")
         return InputStatement(expr)
+
+    def parse_fetch(self):
+        """Parse fetch statement: fetch identifier;"""
+        name = self.consume(TokenType.IDENTIFIER, "Expected module name after 'fetch'")
+        fetch_line = name.line
+        
+        # Check for semicolon with correct line number
+        if not self.check(TokenType.SEMICOLON):
+            raise ParseError(f"Parse error at line {fetch_line}: Expected ';' after fetch statement")
+        
+        self.consume(TokenType.SEMICOLON, "Expected ';' after fetch statement")
+        return FetchStatement(name.value)
 
     # ---------- Expressions ----------
 

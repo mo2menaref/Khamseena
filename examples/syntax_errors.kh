@@ -1,0 +1,21 @@
+fetch basics;
+
+recipe main() {
+    count x = 42
+    measure y = 3.14;
+    serve x + y;
+    
+    taste x > 0) {
+        serve "Missing opening parenthesis";
+    }
+    
+    stir (x < 10 {
+        x = x + 1;
+    }
+    
+    taste (x > 5) 
+        serve "Missing opening brace";
+    }
+    
+    deliver x
+}

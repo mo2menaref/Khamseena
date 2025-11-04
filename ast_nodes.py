@@ -161,3 +161,10 @@ class InputStatement(ASTNode):
     def __str__(self):
         return "Input"
 
+class FetchStatement(ASTNode):
+    def __init__(self, module_name):
+        self.module_name = module_name
+    
+    def __str__(self):
+        return f"Fetch({self.module_name})"
+
