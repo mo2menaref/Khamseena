@@ -1,0 +1,28 @@
+# Test file with semantic errors
+
+recipe main() {
+    # Error 1: Using undefined variable
+    serve undefinedVar;
+    
+    # Error 2: Type mismatch - assigning string to integer
+    count num = "hello";
+    
+    # Error 3: Redeclaring variable in same scope
+    count x = 10;
+    count x = 20;
+    
+    # Error 4: Arithmetic on wrong types
+    note text = "abc";
+    count result = text + 5;
+    
+    # Error 5: Calling undefined function
+    callUndefinedFunction();
+    
+    # Test nested scope - this should work
+    taste (num > 5) {
+        count inner = 100;  # OK - different scope
+        count x = 50;       # OK - shadows outer x
+    }
+    
+    deliver 0;
+}

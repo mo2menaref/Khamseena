@@ -464,7 +464,6 @@ def print_ast(node, indent=0):
             print(f"{spaces}  else:")
             print_ast(node.else_stmt, indent + 2)
     elif hasattr(node, 'value') and node.value:  # Add this for assignments
-        print(f"{spaces}  value:")
         print_ast(node.value, indent + 2)
     elif hasattr(node, 'initializer') and node.initializer:  # Add this for var declarations
         print_ast(node.initializer, indent + 2)

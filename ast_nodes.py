@@ -25,9 +25,7 @@ class FunctionDef:
         self.body = body
     
     def __str__(self):
-        # Change this to customize function definitions
         return f"FUNCTION {self.name}"
-        # Alternative: return f"Function Definition: {self.name}"
 
 class Parameter(ASTNode):
     def __init__(self, param_type, name):
@@ -108,10 +106,8 @@ class BinaryOp:
         self.right = right
     
     def __str__(self):
-        # Change this to customize binary operations
         return f"BinaryOp({self.operator})"
-        # Alternative: return f"Operation: {self.operator}"
-
+    
 class UnaryOp(ASTNode):
     def __init__(self, operator, operand):
         self.operator = operator
@@ -133,9 +129,7 @@ class Variable:
         self.name = name
     
     def __str__(self):
-        # Change this to customize variable references
         return f"identifier {self.name}"
-        # Alternative: return f"Variable({self.name})"
 
 class Literal:
     def __init__(self, value, literal_type):
@@ -143,9 +137,7 @@ class Literal:
         self.type = literal_type
     
     def __str__(self):
-        # Change this to customize literal display
         return f"{self.type} {self.value}"
-        # Alternative: return f"Literal({self.type}: {self.value})"
 
 class CommentStatement(ASTNode):
     def __init__(self, text):
@@ -167,4 +159,3 @@ class FetchStatement(ASTNode):
     
     def __str__(self):
         return f"Fetch({self.module_name})"
-

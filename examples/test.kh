@@ -1,23 +1,46 @@
 fetch basics;
 
+# Test 1: Basic variable declarations and types
+count x = 42;
+measure y = 3.14;
+note msg = "Hello Khamseena";
+flavor flag = sweet;
+
+# Test 2: Function with parameters and scope
+recipe calculateSum(count a, count b) {
+    count result = a + b;
+    deliver result;
+}
+
+# Test 3: Nested scopes with blocks
+recipe testScopes() {
+    count outer = 10;
+    
+    taste (outer > 5) {
+        count inner = 20;
+        outer = outer + inner;
+    }
+    
+    deliver outer;
+}
+
+# Test 4: Type checking
 recipe main() {
-    count x = 42;
-    measure y = 3.14;
-    note msg = "Hello";
-    flavor flag = sweet;
-    serve x + y;
-    pour x;
-    #Hello
-    taste x > 0) {
-        serve "Positive";
-    }
-    retaste {
-        serve "Not positive";
+    count num = 100;
+    measure pi = 3.14159;
+    
+    # Valid: INTEGER to FLOAT conversion
+    measure result = num + pi;
+    
+    # Boolean operations
+    flavor isValid = num > 50 && pi < 4.0;
+    
+    # Loop with scope
+    count i = 0;
+    stir (i < 5) {
+        serve i;
+        i = i + 1;
     }
     
-    stir (x < 10) {
-        x = x + 1;
-    }
-    
-    deliver x;
+    deliver 0;
 }

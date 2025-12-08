@@ -1,8 +1,8 @@
-
 import sys
 import os
 from scanner import Scanner
 from khamseena_parser import Parser, ParseError, print_ast
+from semantic_analyzer import SemanticAnalyzer
 
 def main():
     """Simple main function"""
@@ -10,8 +10,8 @@ def main():
     
     if len(sys.argv) < 2:
         print("Usage:")
-        print("  python main.py <file.kh>   - Parse a file")
-        print("  python main.py test        - Run tests")
+        print("  python parser_main.py <file.kh>   - Parse a file")
+        print("  python parser_main.py test        - Run tests")
         return
     
     if sys.argv[1] == "test":
@@ -32,13 +32,13 @@ def main():
         print("="*40)
         
         # Scan
-        print("1. Scanning...")
+        print("\n1. Scanning...")
         scanner = Scanner(code)
         tokens = scanner.tokenize()
         print(f"   Found {len(tokens)} tokens")
         
         # Parse
-        print("2. Parsing...")
+        print("\n2. Parsing...")
         parser = Parser(tokens)
         ast = parser.parse()
         print("   ✓ Parse successful!")
@@ -46,6 +46,17 @@ def main():
         print("\n3. Abstract Syntax Tree:")
         print("-"*40)
         print_ast(ast)
+        
+        # Semantic Analysis
+        print("\n4. Semantic Analysis...")
+        analyzer = SemanticAnalyzer()
+        success = analyzer.analyze(ast)
+        
+        if not success:
+            print("\n⚠️  Program has semantic errors!")
+            sys.exit(1)
+        else:
+            print("\n🎉 Program is semantically correct!")
         
     except FileNotFoundError:
         print(f"Error: File '{filename}' not found")
