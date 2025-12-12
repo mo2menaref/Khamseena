@@ -1,15 +1,8 @@
-"""
-Semantic Analyzer for Khamseena Programming Language
-Handles symbol tables, data type checking, and scope management
-"""
-
 from ast_nodes import *
-
 
 class SemanticError(Exception):
     """Exception for semantic analysis errors"""
     pass
-
 
 class SymbolTable:
     """Symbol table for variable and function tracking with scope support"""
@@ -46,7 +39,6 @@ class SymbolTable:
         """Get type of a symbol"""
         symbol = self.lookup(name)
         return symbol['type'] if symbol else None
-
 
 class SemanticAnalyzer:
     """Semantic analyzer with type checking and scope management"""
@@ -341,7 +333,7 @@ class SemanticAnalyzer:
             return 'ANY'
         
         elif isinstance(expr, FunctionCall):
-            # For now, we don't track function return types
+            
             return 'ANY'
         
         return 'ANY'
