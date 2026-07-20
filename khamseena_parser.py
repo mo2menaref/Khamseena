@@ -1,6 +1,6 @@
 """
 Simple Parser for Khamseena Programming Language
-Academic project - basic recursive descent parser
+basic recursive descent parser
 """
 
 from khamseena_token import Token, TokenType

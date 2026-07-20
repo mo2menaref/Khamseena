@@ -174,12 +174,6 @@ class Scanner:
         return Token(TokenType.STRING, f'"{string_value}"', start_line, start_column)
     
     def read_identifier(self):
-        """
-        Read an identifier or keyword
-        
-        Returns:
-            Token representing identifier or keyword
-        """
         start_line = self.line
         start_column = self.column
         identifier = ""
